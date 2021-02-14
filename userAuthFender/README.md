@@ -3,20 +3,20 @@
 This is my version of a token based user authentication system. I built all Five REST endpoints as required.
 I made certain assumptions based on the information given in the instructions. This application was written using Java with SpringBoot and mySql.
 
-###Building the Models
+### Building the Models
 
-####User Model
+#### User Model
 I built out a user model with the initial required properties of <b>name</b>, <b>email</b>, and <b>password</b>. I also added an <b>id</b> property, as well as a <b>created</b> and <b>last_updated</b> date.
 These additional properties a for database purposes, <b>id</b> for primary key and indexing and <b>created</b> and <b>last_updated</b> dates for auditing and tracking.
 
-![id, name, email, password, created, last_updated]( /platform-exercise/userAuthFender/src/main/resources/static/userModelDb.png "Description goes here")
+![id, name, email, password, created, last_updated]( https://github.com/Days0fThnder/platform-exercise/blob/master/userAuthFender/src/main/resources/static/userModelDb.png "Description goes here")
 
 
-####Token Model
+#### Token Model
 I also build an additional model to represent the token with four properties, 
 <b>id</b>, <b>token</b>(value of the token), <b>user_id</b>(foreign key to the user table) and <b>created</b> date.
 
-![id, token, user_Id, created]( /platform-exercise/userAuthFender/src/main/resources/static/tokenModelDb.png "Description goes here")
+![id, token, user_Id, created]( https://github.com/Days0fThnder/platform-exercise/blob/master/userAuthFender/src/main/resources/static/tokenModelDb.png "Description goes here")
 
 
 ### App Functionality
@@ -49,8 +49,7 @@ The functionality of the application is based on requirements given in the instr
 5. Delete a User
    
     * This Rest endpoint uses a DELETE request along with the user id (the user you wish to delete) in the uri path.
-      The request also includes a bearer token in the header which is the user associated token created at user log in.
-      
+      The request also includes a bearer token in the header which is the user associated token created at user log in.  
     * The Response should return a 204 no content and the user should be deleted for the database along with their associated token.
     
 ### Installation and Running
