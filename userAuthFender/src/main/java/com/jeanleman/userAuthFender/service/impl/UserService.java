@@ -18,8 +18,10 @@ public class UserService implements IUser {
 
     private UserRepository userRepository;
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
-    public Optional<User> findById(int id) {
+    public Optional<User> findById(long id) {
         return userRepository.findById(id);
     }
 
@@ -31,12 +33,27 @@ public class UserService implements IUser {
     @Override
     public User save(User user) {
         User newUser = new User();
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         newUser.setName(user.getName());
         newUser.setEmail(user.getEmail());
         newUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         newUser.setCreated(LocalDateTime.now());
         newUser.setLastUpdated(LocalDateTime.now());
         return userRepository.save(newUser);
+    }
+
+    @Override
+    public User updateUser(User currentUser, User newUser){
+        if(isNonNull(newUser.getName()))
+            currentUser.setName(newUser.getName());
+        if(isNonNull(newUser.getEmail()))
+            currentUser.setEmail(newUser.getEmail());
+        if(isNonNull(newUser.getPassword()))
+            currentUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));
+        currentUser.setLastUpdated(LocalDateTime.now());
+        return userRepository.save(currentUser);
+    }
+
+    private boolean isNonNull(String userAttr){
+        return userAttr != null && !userAttr.isEmpty();
     }
 }

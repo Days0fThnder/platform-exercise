@@ -19,9 +19,8 @@ public class Token {
     @NonNull
     private String token;
     @NonNull
-    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private User user;
+    private long userId;
     private LocalDateTime created;
 
 }
