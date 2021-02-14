@@ -27,11 +27,13 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<Object> registerUser(@RequestBody User registerUser) {
         Optional<User> user = userService.findByEmail(registerUser.getEmail());
+
         if(user.isPresent()){
             UserApiError apiError = new UserApiError(HttpStatus.BAD_REQUEST, "Email already exists");
             return new ResponseEntity<>(
                     apiError, new HttpHeaders(), apiError.getStatus());
         }
+
         return ResponseEntity.ok(userService.save(registerUser));
 
     }
@@ -39,11 +41,13 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest){
         Optional<User> user = userService.findByEmail(loginRequest.getEmail());
+
         if(!user.isPresent()){
             UserApiError apiError = new UserApiError(HttpStatus.UNAUTHORIZED, "Email not found");
             return new ResponseEntity<>(
                     apiError, new HttpHeaders(), apiError.getStatus());
         }
+
         User existingUser = user.get();
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         if(bCryptPasswordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())){
@@ -58,12 +62,15 @@ public class UserController {
     @PostMapping("/logout")
     public ResponseEntity<Object> logout(@RequestHeader("Authorization") String auth,
                                          @RequestBody LogoutRequest logoutRequest){
+
         Optional<User> user = userService.findByEmail(logoutRequest.getEmail());
-        if(!user.isPresent()){
+
+        if(user.isEmpty()){
             UserApiError apiError = new UserApiError(HttpStatus.UNAUTHORIZED, "Email not found");
             return new ResponseEntity<>(
                     apiError, new HttpHeaders(), apiError.getStatus());
         }
+
         User existingUser = user.get();
         Token token = tokenService.isValidTokenToDelete(auth, existingUser.getId());
         if(token == null){
@@ -72,6 +79,7 @@ public class UserController {
             return new ResponseEntity<>(
                     apiError, new HttpHeaders(), apiError.getStatus());
         }
+
         tokenService.deleteToken(token);
         return ResponseEntity.ok("User logout");
     }
@@ -81,21 +89,40 @@ public class UserController {
                                              @RequestHeader("Authorization") String auth,
                                              @RequestBody User user){
 
+        Optional<User> existingUser = userService.findById(id);
+        if(existingUser.isEmpty()){
+            UserApiError apiError = new UserApiError(HttpStatus.NOT_FOUND,
+                    "User with id " + id + " is Not Found!");
+            return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+        }
+
         if(!tokenService.isValidToken(auth, id)){
             UserApiError apiError = new UserApiError(HttpStatus.UNAUTHORIZED,
                     "Invalid Token");
-            return new ResponseEntity<>(
-                    apiError, new HttpHeaders(), apiError.getStatus());
+            return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
         }
+
+        return ResponseEntity.ok(userService.updateUser(existingUser.get(), user));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> deleteUser(@PathVariable(name= "id") long id,
+                                             @RequestHeader("Authorization") String auth){
         Optional<User> existingUser = userService.findById(id);
-        if(existingUser.isPresent()){
-            return ResponseEntity.ok(userService.updateUser(existingUser.get(), user));
-        }else{
+        if(existingUser.isEmpty()){
             UserApiError apiError = new UserApiError(HttpStatus.NOT_FOUND,
-                    "User with " + id + " is Not Found!");
-            return new ResponseEntity<>(
-                    apiError, new HttpHeaders(), apiError.getStatus());
+                    "User with id " + id + " is Not Found!");
+            return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
         }
+
+        if(!tokenService.isValidToken(auth, id)){
+            UserApiError apiError = new UserApiError(HttpStatus.UNAUTHORIZED,
+                    "Invalid Token");
+            return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+        }
+
+        userService.delete(existingUser.get());
+        return ResponseEntity.noContent().build();
     }
 
 

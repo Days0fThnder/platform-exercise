@@ -9,4 +9,5 @@ public interface IUser {
     Optional<User> findByEmail(String email);
     User save(User user);
     User updateUser(User currentUser, User newUser);
+    void delete(User user);
 }

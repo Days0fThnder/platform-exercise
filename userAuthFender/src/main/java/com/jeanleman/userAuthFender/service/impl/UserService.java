@@ -53,6 +53,11 @@ public class UserService implements IUser {
         return userRepository.save(currentUser);
     }
 
+    @Override
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
     private boolean isNonNull(String userAttr){
         return userAttr != null && !userAttr.isEmpty();
     }

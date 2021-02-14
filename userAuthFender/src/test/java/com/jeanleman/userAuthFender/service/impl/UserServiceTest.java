@@ -7,11 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,12 +22,14 @@ class UserServiceTest {
 
     @Mock
     private UserRepository mockUserRepository;
+    @Mock
+    private BCryptPasswordEncoder mockBCryptPasswordEncoder;
 
     private UserService userServiceUnderTest;
 
     @BeforeEach
     void setUp() {
-        userServiceUnderTest = new UserService(mockUserRepository);
+        userServiceUnderTest = new UserService(mockUserRepository, mockBCryptPasswordEncoder);
     }
 
     @Test
@@ -34,25 +38,25 @@ class UserServiceTest {
 
         // Configure UserRepository.findById(...).
         final Optional<User> user = Optional.of(new User(0L, "name", "email", "password", LocalDateTime.of(2020, 1, 1, 0, 0, 0), LocalDateTime.of(2020, 1, 1, 0, 0, 0)));
-        when(mockUserRepository.findById(0)).thenReturn(user);
+        when(mockUserRepository.findById(0L)).thenReturn(user);
 
         // Run the test
-        final Optional<User> result = userServiceUnderTest.findById(0);
+        final Optional<User> result = userServiceUnderTest.findById(0L);
 
         // Verify the results
-        assertNotNull(result);
+        assertEquals(user.get(), result.get());
     }
 
     @Test
     void testFindById_UserRepositoryReturnsAbsent() {
         // Setup
-        when(mockUserRepository.findById(0)).thenReturn(Optional.empty());
+        when(mockUserRepository.findById(0L)).thenReturn(Optional.empty());
 
         // Run the test
-        final Optional<User> result = userServiceUnderTest.findById(0);
+        final Optional<User> result = userServiceUnderTest.findById(0L);
 
         // Verify the results
-        assertNotNull(result);
+        assertEquals(Optional.empty(), result);
     }
 
     @Test
@@ -67,7 +71,7 @@ class UserServiceTest {
         final Optional<User> result = userServiceUnderTest.findByEmail("email");
 
         // Verify the results
-        assertNotNull(result);
+        assertEquals(user.get(),result.get());
     }
 
     @Test
@@ -79,18 +83,17 @@ class UserServiceTest {
         final Optional<User> result = userServiceUnderTest.findByEmail("email");
 
         // Verify the results
-        assertNotNull(result);
+        assertEquals(Optional.empty(), result);
     }
 
     @Test
     void testSave() {
         // Setup
-        final User user = new User(0L, "name", "email", "password",
-                LocalDateTime.of(2020, 1, 1, 0, 0, 0), LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+        final User user = new User(0L, "name", "email", "password", LocalDateTime.of(2020, 1, 1, 0, 0, 0), LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+        when(mockBCryptPasswordEncoder.encode("password")).thenReturn("result");
 
         // Configure UserRepository.save(...).
-        final User user1 = new User(0L, "name", "email", "password",
-                LocalDateTime.of(2020, 1, 1, 0, 0, 0), LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+        final User user1 = new User(0L, "name", "email", "password", LocalDateTime.of(2020, 1, 1, 0, 0, 0), LocalDateTime.of(2020, 1, 1, 0, 0, 0));
         when(mockUserRepository.save(any(User.class))).thenReturn(user1);
 
         // Run the test
@@ -98,5 +101,35 @@ class UserServiceTest {
 
         // Verify the results
         assertNotNull(result);
+    }
+
+    @Test
+    void testUpdateUser() {
+        // Setup
+        final User currentUser = new User(0L, "name", "email", "password", LocalDateTime.of(2020, 1, 1, 0, 0, 0), LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+        final User newUser = new User(0L, "name", "email", "password", LocalDateTime.of(2020, 1, 1, 0, 0, 0), LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+        when(mockBCryptPasswordEncoder.encode("password")).thenReturn("result");
+
+        // Configure UserRepository.save(...).
+        final User user = new User(0L, "name", "email", "password", LocalDateTime.of(2020, 1, 1, 0, 0, 0), LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+        when(mockUserRepository.save(any(User.class))).thenReturn(user);
+
+        // Run the test
+        final User result = userServiceUnderTest.updateUser(currentUser, newUser);
+
+        // Verify the results
+        assertNotNull(result);
+    }
+
+    @Test
+    void testDelete() {
+        // Setup
+        final User user = new User(0L, "name", "email", "password", LocalDateTime.of(2020, 1, 1, 0, 0, 0), LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+
+        // Run the test
+        userServiceUnderTest.delete(user);
+
+        // Verify the results
+        verify(mockUserRepository).delete(any(User.class));
     }
 }
