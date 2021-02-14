@@ -1,5 +1,6 @@
 package com.jeanleman.userAuthFender.service.impl;
 
+import com.jeanleman.userAuthFender.dto.TokenResponse;
 import com.jeanleman.userAuthFender.model.Token;
 import com.jeanleman.userAuthFender.model.User;
 import com.jeanleman.userAuthFender.repositories.TokenRepository;
@@ -40,15 +41,18 @@ public class TokenService implements IToken {
         tokenRepository.delete(token);
     }
 
-    public Token returnToken(User user){
+    public TokenResponse returnToken(User user){
         Optional<Token> optionalToken = findByUserId(user.getId());
         if(optionalToken.isPresent()){
-            return optionalToken.get();
+            return new TokenResponse(optionalToken.get().getToken());
         }
 
         Token token = new Token();
         token.setUserId(user.getId());
-        return save(token);
+        Token savedToken = save(token);
+
+        TokenResponse tokenResponse = new TokenResponse(savedToken.getToken());
+        return tokenResponse;
     }
 
     public boolean isValidToken(String auth, long id){

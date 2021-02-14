@@ -18,7 +18,6 @@ public class Token {
     private Long id;
     @NonNull
     private String token;
-    @NonNull
     @JoinColumn(name = "user_id")
     private long userId;
     private LocalDateTime created;
