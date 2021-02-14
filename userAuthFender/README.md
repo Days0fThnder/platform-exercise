@@ -9,14 +9,14 @@ I made certain assumptions based on the information given in the instructions. T
 I built out a user model with the initial required properties of <b>name</b>, <b>email</b>, and <b>password</b>. I also added an <b>id</b> property, as well as a <b>created</b> and <b>last_updated</b> date.
 These additional properties a for database purposes, <b>id</b> for primary key and indexing and <b>created</b> and <b>last_updated</b> dates for auditing and tracking.
 
-![id, name, email, password, created, last_updated]( https://github.com/Days0fThnder/platform-exercise/blob/master/userAuthFender/src/main/resources/static/tokenModelDb.png "Description goes here")
+![id, name, email, password, created, last_updated]( https://github.com/Days0fThnder/platform-exercise/blob/master/userAuthFender/src/main/resources/static/userModelDb.png "Description goes here")
 
 
 ####Token Model
 I also build an additional model to represent the token with four properties, 
 <b>id</b>, <b>token</b>(value of the token), <b>user_id</b>(foreign key to the user table) and <b>created</b> date.
 
-![id, token, user_Id, created]( /platform-exercise/userAuthFender/src/main/resources/static/tokenModelDb.png "Description goes here")
+![id, token, user_Id, created]( https://github.com/Days0fThnder/platform-exercise/blob/master/userAuthFender/src/main/resources/static/tokenModelDb.png "Description goes here")
 
 
 ### App Functionality
