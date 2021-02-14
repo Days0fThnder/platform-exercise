@@ -49,8 +49,7 @@ The functionality of the application is based on requirements given in the instr
 5. Delete a User
    
     * This Rest endpoint uses a DELETE request along with the user id (the user you wish to delete) in the uri path.
-      The request also includes a bearer token in the header which is the user associated token created at user log in.
-      
+      The request also includes a bearer token in the header which is the user associated token created at user log in.  
     * The Response should return a 204 no content and the user should be deleted for the database along with their associated token.
     
 ### Installation and Running
