@@ -7,13 +7,13 @@ I made certain assumptions based on the information given in the instructions. T
 
 #### User Model
 I built out a user model with the initial required properties of <b>name</b>, <b>email</b>, and <b>password</b>. I also added an <b>id</b> property, as well as a <b>created</b> and <b>last_updated</b> date.
-These additional properties a for database purposes, <b>id</b> for primary key and indexing and <b>created</b> and <b>last_updated</b> dates for auditing and tracking.
+These additional properties are for database purposes, <b>id</b> for primary key and indexing, while <b>created</b> and <b>last_updated</b> dates are for auditing and tracking.
 
 ![id, name, email, password, created, last_updated]( https://github.com/Days0fThnder/platform-exercise/blob/master/userAuthFender/src/main/resources/static/userModelDb.png "Description goes here")
 
 
 #### Token Model
-I also build an additional model to represent the token with four properties, 
+I also built an additional model to represent the token with four properties, 
 <b>id</b>, <b>token</b>(value of the token), <b>user_id</b>(foreign key to the user table) and <b>created</b> date.
 
 ![id, token, user_Id, created]( https://github.com/Days0fThnder/platform-exercise/blob/master/userAuthFender/src/main/resources/static/tokenModelDb.png "Description goes here")
@@ -36,8 +36,8 @@ The functionality of the application is based on requirements given in the instr
     
 3. Logout - logs a user out
    
-    * This Rest endpoint user a POST request with a JSON payload including the email of the user you wish to log out.
-    * The response is a 200 status, if log out is successful, and a deletion of the token associated with the user.
+    * This Rest endpoint uses a POST request with a JSON payload including the email of the user you wish to log out.
+    * The response is a 200 status, if log out is successful. The token associated with said user is also deleted.
     
 4. Update a User's Information
    
@@ -50,11 +50,14 @@ The functionality of the application is based on requirements given in the instr
    
     * This Rest endpoint uses a DELETE request along with the user id (the user you wish to delete) in the uri path.
       The request also includes a bearer token in the header which is the user associated token created at user log in.  
-    * The Response should return a 204 no content and the user should be deleted for the database along with their associated token.
+    * The Response should return a 204 no content and the user should be deleted from the database along with their associated token.
+    
+ <i>For detailed information on the API Rest endpoints follow this link when app is running locally</i>
+ (http://localhost:8080/swagger-ui.html#/)
     
 ### Installation and Running
 
-#### Requirement
+#### Required Tools
 1. [Java 14](https://jdk.java.net/14)
 2. Your Favorite Java IDE, ([Intellij](https://www.jetbrains.com/idea/download) recommend)
 3. [Gradle](https://gradle.org)
@@ -69,10 +72,10 @@ Once tools are downloaded and installed, we first need to set up the database.
  1. From the Docker hub download the latest image of mysql. <i>(cli: ```$ docker pull mysql```)</i>
  2. From your docker dashboard you will be able to start the image. <i>(cli: ``` $ docker run --name mysql ```)</i>
 
-#### mySql dbms client
+#### mysql dbms client
 
-1. I recommend using DBMS client GUI to connect to the mysql docker image, I used [mySql Workbench](https://www.mysql.com/products/workbench/).
-Once your DBMS client is downloaded and installed the connection details of the image can be found in the docker dashboard under "Containers / Apps" and clicking on the running mysql container and clicking on the "Inspect" tab.
+1. I recommend using a DBMS client GUI to connect to the mysql docker image, I used [mySql Workbench](https://www.mysql.com/products/workbench/).
+Once your DBMS client is downloaded and installed, the connection details of the image can be found in the docker dashboard under "Containers / Apps" and clicking on the running mysql container and clicking on the "Inspect" tab.
 
 2. Once connected to the docker image. You can take a dump of the schema by using the file stored in the resources directory of the project ```<yourPath>/resources/static/userFender.sql```.
 
@@ -91,7 +94,7 @@ Once your DBMS client is downloaded and installed the connection details of the 
 
 ### Further Possible Enhancements
 1. I was able to create one Unit test to test the ``UserServices`` class, with more time I could create more tests classes to cover more cases.
-   * <i>Test can run through the IDE, but I with more time I should be able to get them to run for command line</i>
+   * <i>Test can run through the IDE, but I with more time I should be able to get them to run for the command line</i>
 2. Given more time I could also enhance the functionality of the token, like set an expiration time/date for more security.
 3. I could also give the token the ability to be refreshed automatically maybe
 4. I could also create a feature to recover a forgotten password.
